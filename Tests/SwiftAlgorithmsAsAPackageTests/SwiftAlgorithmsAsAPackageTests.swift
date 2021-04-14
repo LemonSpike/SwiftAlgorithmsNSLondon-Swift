@@ -7,17 +7,18 @@ final class SwiftAlgorithmsAsAPackageTests: XCTestCase {
   static let qOneSolution = [[-2, -1, 1, 2], [-2, 0, 0, 2], [-1, 0, 0, 1]]
 
   func test_q_one_solutions_on_empty_array() throws {
-    let combos = QOneSolutionOne().fourSum([], target: 9)
+    var combos = QOneSolutionOne().fourSum([], target: 9)
     XCTAssertEqual(combos, [])
-    let setCombos = QOneSolutionTwo().fourSum([], target: 9)
-    XCTAssertEqual(setCombos, [])
+    combos = [].fourSumSafe(target: 9)
+    XCTAssertEqual(combos, [])
   }
 
   func test_q_one_solutions() throws {
-    let combos = QOneSolutionOne().fourSum([1, 0, -1, 0, -2, 2], target: 0)
+    var combos = QOneSolutionOne().fourSum([1, 0, -1, 0, -2, 2], target: 0)
     XCTAssertEqual(combos, Self.qOneSolution)
-    let setCombos = QOneSolutionTwo().fourSum([1, 0, -1, 0, -2, 2], target: 0)
-    XCTAssertEqual(setCombos, Set(Self.qOneSolution.map(Set.init)))
+    combos = [1, 0, -1, 0, -2, 2].fourSumSafe(target: 0)
+    XCTAssertEqual(Set(combos.map(Set.init)),
+                   Set(Self.qOneSolution.map(Set.init)))
   }
 
   func test_q_one_measure_raw_performance() throws {
@@ -36,14 +37,19 @@ final class SwiftAlgorithmsAsAPackageTests: XCTestCase {
   func test_q_one_measure_algorithms_performance() throws {
     measure(metrics: [XCTClockMetric(), XCTMemoryMetric(), XCTStorageMetric()],
             block: {
-      var sums: [Set<Set<Int>>] = []
+      var sums: [[[Int]]] = []
       (1...100).counters.forEach {
-        let sum = QOneSolutionTwo().fourSum([1, 0, -1, 0, -2, 2, 3, -3, 0, 4,
-                                             -2, 5, -4, 6, -6, 7, -8, 8, -7],
-                                            target: 0)
+        let sum = [1, 0, -1, 0, -2, 2, 3, -3, 0, 4,
+                   -2, 5, -4, 6, -6, 7, -8, 8, -7].fourSumSafe(target: 0)
         sums.append(sum)
       }
     })
+  }
+
+  func test_q_one_sum_edge_case() {
+    let array = [100 as Int8, 28, -100, -100]
+//    _ = array.fourSumUnsafe(target: -72)
+    XCTAssertEqualSequences(array.fourSumSafe(target: -72), [array])
   }
 
   // MARK: Q Two
@@ -115,6 +121,8 @@ final class SwiftAlgorithmsAsAPackageTests: XCTestCase {
      test_q_one_measure_raw_performance),
     ("testQuestionOneAlgosPerformance",
      test_q_one_measure_algorithms_performance),
+    ("testQuestionOneEdgeCaseFourSum",
+    test_q_one_sum_edge_case),
     ("testQuestionTwoAllSolutionsEmptyNumber",
      test_q_two_solutions_on_empty_number),
     ("testQuestionTwoAllSolutions",
@@ -123,7 +131,7 @@ final class SwiftAlgorithmsAsAPackageTests: XCTestCase {
      test_q_two_measure_dfs_iterative_performance),
     ("testQuestionTwoDFSRecursivePerformance",
      test_q_two_measure_dfs_recursive_performance),
-    ("testQuestionTwoRecursiveAlgorithmsPerformance",
+    ("testQuestionTwoAlgorithmsBFSRecursivePerformance",
      test_q_two_measure_algorithms_bfs_recursive_performance)
   ]
 }

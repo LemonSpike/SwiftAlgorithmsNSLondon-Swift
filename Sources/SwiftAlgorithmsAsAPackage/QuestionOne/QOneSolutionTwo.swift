@@ -8,14 +8,18 @@
 import Foundation
 import Algorithms
 
-struct QOneSolutionTwo {
-  func fourSum(_ numbers: [Int], target: Int) -> Set<Set<Int>> {
-    var candidates: Set<Set<Int>> = []
-    for combination in numbers.combinations(ofCount: 4) {
-      if combination.reduce(0, +) == target {
-        candidates.insert(Set(combination))
-      }
-    }
-    return candidates
+extension Array where Element: FixedWidthInteger {
+  func fourSumUnsafe(target: Int) -> [Self] {
+    self
+      .combinations(ofCount: 4)
+      .filter { $0.reduce(0, +) == target }
+  }
+}
+
+extension Array where Element: FixedWidthInteger & SignedInteger {
+  func fourSumSafe(target: Int) -> [Self] {
+    self
+      .combinations(ofCount: 4)
+      .filter { $0.sum() == target }
   }
 }
