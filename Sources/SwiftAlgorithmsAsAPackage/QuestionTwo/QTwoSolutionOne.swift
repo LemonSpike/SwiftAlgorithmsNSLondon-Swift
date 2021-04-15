@@ -25,8 +25,8 @@ struct LocalConstants {
 
 // Instead of struct.
 extension String {
-  func phoneNumberCombinationsIterative() -> [String] {
 
+  func phoneNumberCombinationsIterative() -> [String] {
     // Edge case.
     if self.isEmpty {
       return []
